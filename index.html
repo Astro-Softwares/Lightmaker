@@ -1,0 +1,375 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lightmaker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #111;
+  color: #fff;
+  font-family: system-ui, sans-serif;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ---------- SIDEBAR ---------- */
+#sidebar {
+  width: 280px;
+  background: #181818;
+  border-right: 1px solid #2a2a2a;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+}
+
+#sidebar h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+}
+
+button {
+  background: #2b2b2b;
+  color: #fff;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+button:hover { background: #3a3a3a; }
+
+button.delete {
+  background: #402020;
+}
+button.delete:hover {
+  background: #5a2626;
+}
+
+input[type="range"], input[type="color"] {
+  width: 100%;
+}
+
+/* ---------- CONTROLS ---------- */
+.control-group {
+  background: #202020;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ---------- MAIN ---------- */
+#main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  padding: 8px;
+  text-align: center;
+  background: #141414;
+  font-size: 22px;
+  letter-spacing: 1px;
+}
+
+/* ---------- WORKSPACE ---------- */
+#workspace {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+}
+
+/* ---------- IMAGE ---------- */
+#photo-container {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.9);
+}
+
+#photo {
+  display: block;
+  max-width: calc(100vw - 320px);
+  max-height: calc(100vh - 90px);
+}
+
+/* ---------- LIGHT LAYERS ---------- */
+.light-overlay, .vignette-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.light-overlay { mix-blend-mode: screen; }
+
+/* ---------- LIGHT DOT ---------- */
+.light-dot {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 10px white;
+  cursor: grab;
+}
+
+.light-dot.selected {
+  outline: 3px solid #4cc9f0;
+}
+</style>
+</head>
+
+<body>
+
+<div id="sidebar">
+  <h2>Lights</h2>
+
+  <button id="uploadBtn">Upload Image</button>
+  <input type="file" id="upload" accept="image/*" hidden>
+
+  <button id="addLight">+ Add Light</button>
+
+  <div id="lightList"></div>
+
+  <h2>Selected Light</h2>
+  <div class="control-group">
+    Color <input type="color" id="color">
+    Intensity <input type="range" id="intensity" min="0" max="1" step="0.01">
+    Size <input type="range" id="size" min="100" max="600">
+    X <input type="range" id="posX" min="0" max="100">
+    Y <input type="range" id="posY" min="0" max="100">
+
+    <button class="delete" id="deleteLight">Delete Light</button>
+  </div>
+
+  <h2>Vignette</h2>
+  <div class="control-group">
+    <label><input type="checkbox" id="vToggle"> Enable</label>
+    Strength <input type="range" id="vStrength" min="0" max="1" step="0.05" value="0.6">
+  </div>
+
+  <button id="download">Download</button>
+</div>
+
+<div id="main">
+  <header>Lightmaker</header>
+
+  <div id="workspace">
+    <div id="photo-container">
+      <img id="photo">
+      <div class="vignette-overlay"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const photo = document.getElementById("photo");
+const container = document.getElementById("photo-container");
+const upload = document.getElementById("upload");
+const uploadBtn = document.getElementById("uploadBtn");
+const addLightBtn = document.getElementById("addLight");
+const list = document.getElementById("lightList");
+const deleteBtn = document.getElementById("deleteLight");
+
+const color = document.getElementById("color");
+const intensity = document.getElementById("intensity");
+const size = document.getElementById("size");
+const posX = document.getElementById("posX");
+const posY = document.getElementById("posY");
+
+const vToggle = document.getElementById("vToggle");
+const vStrength = document.getElementById("vStrength");
+const vignetteOverlay = document.querySelector(".vignette-overlay");
+
+const lights = [];
+let selected = null;
+
+uploadBtn.onclick = () => upload.click();
+upload.onchange = e => photo.src = URL.createObjectURL(e.target.files[0]);
+
+addLightBtn.onclick = () => {
+  const l = createLight();
+  lights.push(l);
+  list.appendChild(l.button);
+  container.append(l.overlay, l.dot);
+  selectLight(l);
+  render(l);
+};
+
+deleteBtn.onclick = () => {
+  if (!selected) return;
+
+  selected.dot.remove();
+  selected.overlay.remove();
+  selected.button.remove();
+
+  const index = lights.indexOf(selected);
+  lights.splice(index, 1);
+
+  selected = null;
+  if (lights.length > 0) selectLight(lights[Math.max(0, index - 1)]);
+};
+
+function selectLight(l) {
+  lights.forEach(x => x.dot.classList.remove("selected"));
+  selected = l;
+  l.dot.classList.add("selected");
+
+  color.value = l.color;
+  intensity.value = l.intensity;
+  size.value = l.size;
+  posX.value = l.x;
+  posY.value = l.y;
+}
+
+function createLight() {
+  const dot = document.createElement("div");
+  dot.className = "light-dot";
+  dot.style.left = "50%";
+  dot.style.top = "50%";
+
+  const overlay = document.createElement("div");
+  overlay.className = "light-overlay";
+
+  const button = document.createElement("button");
+  button.textContent = `Light ${lights.length + 1}`;
+  button.onclick = () => selectLight(light);
+
+  const light = {
+    dot, overlay, button,
+    color: "#ffffff",
+    intensity: 0.8,
+    size: 250,
+    x: 50,
+    y: 50
+  };
+
+  makeDraggable(light);
+  return light;
+}
+
+function makeDraggable(l) {
+  l.dot.onmousedown = e => {
+    const r = photo.getBoundingClientRect();
+    const ox = e.offsetX;
+    const oy = e.offsetY;
+
+    document.onmousemove = ev => {
+      l.x = ((ev.clientX - r.left - ox) / photo.width) * 100;
+      l.y = ((ev.clientY - r.top - oy) / photo.height) * 100;
+      updatePosition(l);
+      syncControls(l);
+      render(l);
+    };
+    document.onmouseup = () => document.onmousemove = null;
+  };
+}
+
+function updatePosition(l) {
+  l.dot.style.left = l.x + "%";
+  l.dot.style.top = l.y + "%";
+}
+
+function syncControls(l) {
+  if (l === selected) {
+    posX.value = l.x;
+    posY.value = l.y;
+  }
+}
+
+[color, intensity, size, posX, posY].forEach(c =>
+  c.oninput = () => {
+    if (!selected) return;
+    selected.color = color.value;
+    selected.intensity = intensity.value;
+    selected.size = size.value;
+    selected.x = posX.value;
+    selected.y = posY.value;
+    updatePosition(selected);
+    render(selected);
+  }
+);
+
+function render(l) {
+  const c = document.createElement("canvas");
+  c.width = photo.width;
+  c.height = photo.height;
+  const ctx = c.getContext("2d");
+
+  const x = (l.x / 100) * c.width;
+  const y = (l.y / 100) * c.height;
+
+  const g = ctx.createRadialGradient(x,y,0,x,y,l.size);
+  g.addColorStop(0, rgba(l.color, l.intensity));
+  g.addColorStop(1, "rgba(0,0,0,0)");
+
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,c.width,c.height);
+  l.overlay.style.backgroundImage = `url(${c.toDataURL()})`;
+}
+
+function rgba(hex, a) {
+  return `rgba(${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)},${a})`;
+}
+
+document.getElementById("download").onclick = () => {
+  const c = document.createElement("canvas");
+  c.width = photo.width;
+  c.height = photo.height;
+  const ctx = c.getContext("2d");
+  ctx.drawImage(photo,0,0);
+
+  lights.forEach(l => {
+    const x = (l.x / 100) * c.width;
+    const y = (l.y / 100) * c.height;
+    const g = ctx.createRadialGradient(x,y,0,x,y,l.size);
+    g.addColorStop(0, rgba(l.color, l.intensity * 0.6));
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,c.width,c.height);
+  });
+
+  if (vToggle.checked) {
+    const vg = ctx.createRadialGradient(
+      c.width/2,c.height/2,
+      c.width*0.45,
+      c.width/2,c.height/2,
+      c.width
+    );
+    vg.addColorStop(0,"rgba(0,0,0,0)");
+    vg.addColorStop(1,`rgba(0,0,0,${vStrength.value})`);
+    ctx.fillStyle = vg;
+    ctx.fillRect(0,0,c.width,c.height);
+  }
+
+  const a = document.createElement("a");
+  a.href = c.toDataURL();
+  a.download = "lightmaker.png";
+  a.click();
+};
+
+vToggle.onchange = vStrength.oninput = () => {
+  vignetteOverlay.style.background = vToggle.checked
+    ? `radial-gradient(circle, rgba(0,0,0,0) 55%, rgba(0,0,0,${vStrength.value}) 100%)`
+    : "";
+};
+</script>
+
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"e3c1c9af36de41759418005494a48906","r":1,"spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
