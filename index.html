@@ -1,5 +1,5 @@
-
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -7,181 +7,637 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-* { box-sizing: border-box; }
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #090a0c;
+  --panel: #101216;
+  --panel2: #15171c;
+  --panel3: #1a1d23;
+  --border: #252932;
+  --border-light: #30343e;
+  --text: #f5f7fa;
+  --muted: #8b919d;
+  --accent: #6c7cff;
+  --accent2: #8c72ff;
+  --danger: #ff4f5e;
+}
 
 body {
   margin: 0;
-  background: #111;
-  color: #fff;
-  font-family: system-ui, sans-serif;
-  display: flex;
   height: 100vh;
   overflow: hidden;
+  background:
+    radial-gradient(circle at 70% 30%, rgba(91, 76, 255, 0.06), transparent 35%),
+    radial-gradient(circle at 30% 80%, rgba(0, 180, 255, 0.04), transparent 30%),
+    var(--bg);
+  color: var(--text);
+  font-family: "Montserrat", system-ui, sans-serif;
 }
 
-/* ---------- SIDEBAR ---------- */
+/* ================= SIDEBAR ================= */
+
 #sidebar {
-  width: 280px;
-  background: #181818;
-  border-right: 1px solid #2a2a2a;
-  padding: 14px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 290px;
+  padding: 18px;
+  background: rgba(14, 16, 20, 0.96);
+  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   gap: 14px;
   overflow-y: auto;
+  z-index: 10;
+  backdrop-filter: blur(20px);
 }
 
-#sidebar h2 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 500;
-  text-align: center;
+#sidebar::-webkit-scrollbar {
+  width: 5px;
 }
+
+#sidebar::-webkit-scrollbar-thumb {
+  background: #292d35;
+  border-radius: 20px;
+}
+
+/* Logo */
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 4px 15px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 2px;
+}
+
+.logo-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  box-shadow: 0 0 25px rgba(108,124,255,.25);
+  font-size: 17px;
+}
+
+.logo-text {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: .3px;
+}
+
+.logo-text span {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* Section titles */
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 3px;
+  color: #c9cdd5;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+}
+
+/* Buttons */
 
 button {
-  background: #2b2b2b;
-  color: #fff;
-  border: none;
-  padding: 8px 10px;
+  border: 1px solid var(--border-light);
+  background: linear-gradient(180deg, #20232a, #191b20);
+  color: var(--text);
+  padding: 10px 12px;
   border-radius: 10px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
-}
-button:hover { background: #3a3a3a; }
-
-button.delete {
-  background: #402020;
-}
-button.delete:hover {
-  background: #5a2626;
+  transition:
+    background .18s ease,
+    border .18s ease,
+    transform .15s ease,
+    box-shadow .18s ease;
 }
 
-input[type="range"], input[type="color"] {
-  width: 100%;
+button:hover {
+  background: linear-gradient(180deg, #292d36, #20232a);
+  border-color: #414651;
+  box-shadow: 0 5px 20px rgba(0,0,0,.25);
 }
 
-/* ---------- CONTROLS ---------- */
-.control-group {
-  background: #202020;
-  padding: 10px;
-  border-radius: 10px;
-  font-size: 13px;
+button:active {
+  transform: scale(.97);
+}
+
+.primary {
+  background: linear-gradient(135deg, #6675ff, #785fff);
+  border-color: transparent;
+  box-shadow: 0 7px 25px rgba(108,124,255,.18);
+}
+
+.primary:hover {
+  background: linear-gradient(135deg, #7180ff, #846cff);
+  border-color: transparent;
+  box-shadow: 0 8px 30px rgba(108,124,255,.28);
+}
+
+.delete {
+  margin-top: 5px;
+  background: rgba(255,79,94,.08);
+  border-color: rgba(255,79,94,.2);
+  color: #ff7c87;
+}
+
+.delete:hover {
+  background: rgba(255,79,94,.15);
+  border-color: rgba(255,79,94,.4);
+}
+
+/* ================= LIGHT LIST ================= */
+
+#lightList {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-/* ---------- MAIN ---------- */
+.light-list-button {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: #15171c;
+  border-color: var(--border);
+  padding: 9px 11px;
+}
+
+.light-list-button::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 8px rgba(255,255,255,.8);
+}
+
+.light-list-button:hover {
+  background: #1d2026;
+}
+
+/* ================= CONTROL BOX ================= */
+
+.control-group {
+  background: linear-gradient(145deg, #15171c, #111318);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.02),
+    0 10px 30px rgba(0,0,0,.12);
+}
+
+.control-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #aeb3bd;
+  font-size: 11px;
+  margin-top: 3px;
+}
+
+.value {
+  color: #e8ebf1;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* ================= COLOR ================= */
+
+.color-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 3px;
+}
+
+input[type="color"] {
+  width: 42px;
+  height: 28px;
+  padding: 2px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  background: #111;
+  cursor: pointer;
+}
+
+/* ================= SLIDERS ================= */
+
+input[type="range"] {
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 10px;
+  outline: none;
+  background: #292d35;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #f2f4f8;
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 10px rgba(108,124,255,.5);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #f2f4f8;
+  border: 2px solid var(--accent);
+}
+
+/* ================= TOGGLE ================= */
+
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #b9bec8;
+  font-size: 11px;
+}
+
+.switch {
+  position: relative;
+  width: 38px;
+  height: 21px;
+}
+
+.switch input {
+  display: none;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  background: #292d35;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.slider:before {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  left: 3px;
+  top: 3px;
+  border-radius: 50%;
+  background: #8c919b;
+  transition: .2s;
+}
+
+.switch input:checked + .slider {
+  background: var(--accent);
+}
+
+.switch input:checked + .slider:before {
+  transform: translateX(17px);
+  background: white;
+}
+
+/* ================= MAIN ================= */
+
 #main {
-  flex: 1;
+  margin-left: 290px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
+/* Header */
+
 header {
-  padding: 8px;
-  text-align: center;
-  background: #141414;
-  font-size: 22px;
-  letter-spacing: 1px;
+  height: 58px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background: rgba(12,14,18,.8);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(15px);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #d8dbe2;
 }
 
-/* ---------- WORKSPACE ---------- */
+.header-dot {
+  position: absolute;
+  left: 20px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #6cffad;
+  box-shadow: 0 0 10px rgba(108,255,173,.7);
+}
+
+/* Workspace */
+
 #workspace {
   flex: 1;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 8px;
+  padding: 35px;
+  overflow: hidden;
+
+  background-image:
+    linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+  background-size: 30px 30px;
 }
 
-/* ---------- IMAGE ---------- */
+/* Image */
+
 #photo-container {
   position: relative;
-  border-radius: 18px;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 30px 80px rgba(0,0,0,0.9);
+  background: #0b0c0f;
+  border: 1px solid #292d35;
+  box-shadow:
+    0 30px 80px rgba(0,0,0,.65),
+    0 0 0 1px rgba(255,255,255,.02);
 }
 
 #photo {
   display: block;
-  max-width: calc(100vw - 320px);
-  max-height: calc(100vh - 90px);
+  max-width: calc(100vw - 350px);
+  max-height: calc(100vh - 130px);
+  object-fit: contain;
 }
 
-/* ---------- LIGHT LAYERS ---------- */
-.light-overlay, .vignette-overlay {
+/* Empty state */
+
+#photo[src=""] {
+  min-width: 500px;
+  min-height: 300px;
+}
+
+/* ================= LIGHTS ================= */
+
+.light-overlay,
+.vignette-overlay {
   position: absolute;
   inset: 0;
   pointer-events: none;
 }
 
-.light-overlay { mix-blend-mode: screen; }
+.light-overlay {
+  mix-blend-mode: screen;
+}
 
-/* ---------- LIGHT DOT ---------- */
 .light-dot {
   position: absolute;
-  width: 24px;
-  height: 24px;
+  width: 25px;
+  height: 25px;
+  transform: translate(-50%, -50%);
   border-radius: 50%;
-  border: 2px solid white;
-  box-shadow: 0 0 10px white;
+  border: 2px solid rgba(255,255,255,.9);
+  background: rgba(255,255,255,.08);
+  box-shadow:
+    0 0 10px rgba(255,255,255,.7),
+    inset 0 0 5px rgba(255,255,255,.4);
   cursor: grab;
+  z-index: 5;
+  transition: box-shadow .15s ease, transform .15s ease;
+}
+
+.light-dot:hover {
+  transform: translate(-50%, -50%) scale(1.15);
+}
+
+.light-dot:active {
+  cursor: grabbing;
 }
 
 .light-dot.selected {
-  outline: 3px solid #4cc9f0;
+  border-color: #6c7cff;
+  box-shadow:
+    0 0 0 3px rgba(108,124,255,.2),
+    0 0 20px rgba(108,124,255,.8);
+}
+
+/* ================= DOWNLOAD ================= */
+
+#download {
+  margin-top: auto;
+  height: 42px;
+  background: linear-gradient(135deg, #6675ff, #785fff);
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(108,124,255,.15);
+}
+
+#download:hover {
+  box-shadow: 0 10px 35px rgba(108,124,255,.3);
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 750px) {
+
+  #sidebar {
+    width: 230px;
+  }
+
+  #main {
+    margin-left: 230px;
+  }
+
+  #photo {
+    max-width: calc(100vw - 260px);
+  }
+
+  #workspace {
+    padding: 15px;
+  }
 }
 </style>
+
 </head>
 
 <body>
 
+<!-- ================= SIDEBAR ================= -->
+
 <div id="sidebar">
-  <h2>Lights</h2>
 
-  <button id="uploadBtn">Upload Image</button>
-  <input type="file" id="upload" accept="image/*" hidden>
+  <div class="logo">
+    <div class="logo-icon">✦</div>
+    <div class="logo-text">
+      Light<span>maker</span>
+    </div>
+  </div>
 
-  <button id="addLight">+ Add Light</button>
+  <div class="section-title">
+    <span>Project</span>
+  </div>
+
+<button class="primary" id="uploadBtn">＋ Upload Image</button> <input type="file" id="upload" accept="image/*" hidden>
+
+<button id="addLight">＋ Add Light</button>
+
+  <div class="section-title">
+    <span>Lights</span>
+    <span id="lightCount">0</span>
+  </div>
 
   <div id="lightList"></div>
 
-  <h2>Selected Light</h2>
-  <div class="control-group">
-    Color <input type="color" id="color">
-    Intensity <input type="range" id="intensity" min="0" max="1" step="0.01">
-    Size <input type="range" id="size" min="100" max="600">
-    X <input type="range" id="posX" min="0" max="100">
-    Y <input type="range" id="posY" min="0" max="100">
-
-    <button class="delete" id="deleteLight">Delete Light</button>
+  <div class="section-title">
+    <span>Selected Light</span>
   </div>
 
-  <h2>Vignette</h2>
   <div class="control-group">
-    <label><input type="checkbox" id="vToggle"> Enable</label>
-    Strength <input type="range" id="vStrength" min="0" max="1" step="0.05" value="0.6">
-  </div>
 
-  <button id="download">Download</button>
+```
+<div class="color-row">
+  <span class="control-label">Color</span>
+  <input type="color" id="color" value="#ffffff">
 </div>
 
+<div class="control-label">
+  <span>Intensity</span>
+  <span class="value" id="intensityValue">80%</span>
+</div>
+<input type="range" id="intensity" min="0" max="1" step="0.01" value="0.8">
+
+<div class="control-label">
+  <span>Size</span>
+  <span class="value" id="sizeValue">250</span>
+</div>
+<input type="range" id="size" min="100" max="600" value="250">
+
+<div class="control-label">
+  <span>Position X</span>
+  <span class="value" id="xValue">50%</span>
+</div>
+<input type="range" id="posX" min="0" max="100" value="50">
+
+<div class="control-label">
+  <span>Position Y</span>
+  <span class="value" id="yValue">50%</span>
+</div>
+<input type="range" id="posY" min="0" max="100" value="50">
+
+<button class="delete" id="deleteLight">Delete Light</button>
+```
+
+  </div>
+
+  <div class="section-title">
+    <span>Vignette</span>
+  </div>
+
+  <div class="control-group">
+
+```
+<div class="toggle-row">
+  <span>Enable Vignette</span>
+
+  <label class="switch">
+    <input type="checkbox" id="vToggle">
+    <span class="slider"></span>
+  </label>
+</div>
+
+<div class="control-label">
+  <span>Strength</span>
+  <span class="value" id="vValue">60%</span>
+</div>
+
+<input
+  type="range"
+  id="vStrength"
+  min="0"
+  max="1"
+  step="0.05"
+  value="0.6"
+>
+```
+
+  </div>
+
+<button id="download">↓ Export Image</button>
+
+</div>
+
+<!-- ================= MAIN ================= -->
+
 <div id="main">
-  <header>Lightmaker</header>
+
+  <header>
+    <div class="header-dot"></div>
+    Lightmaker
+  </header>
 
   <div id="workspace">
-    <div id="photo-container">
-      <img id="photo">
-      <div class="vignette-overlay"></div>
-    </div>
+
+```
+<div id="photo-container">
+
+  <img id="photo" alt="">
+
+  <div class="vignette-overlay"></div>
+
+</div>
+```
+
   </div>
+
 </div>
 
 <script>
+
+/* ================= ELEMENTS ================= */
+
 const photo = document.getElementById("photo");
 const container = document.getElementById("photo-container");
+
 const upload = document.getElementById("upload");
 const uploadBtn = document.getElementById("uploadBtn");
+
 const addLightBtn = document.getElementById("addLight");
 const list = document.getElementById("lightList");
 const deleteBtn = document.getElementById("deleteLight");
@@ -192,184 +648,626 @@ const size = document.getElementById("size");
 const posX = document.getElementById("posX");
 const posY = document.getElementById("posY");
 
+const intensityValue = document.getElementById("intensityValue");
+const sizeValue = document.getElementById("sizeValue");
+const xValue = document.getElementById("xValue");
+const yValue = document.getElementById("yValue");
+
 const vToggle = document.getElementById("vToggle");
 const vStrength = document.getElementById("vStrength");
-const vignetteOverlay = document.querySelector(".vignette-overlay");
+const vValue = document.getElementById("vValue");
+
+const vignetteOverlay =
+  document.querySelector(".vignette-overlay");
+
+const lightCount =
+  document.getElementById("lightCount");
+
+
+/* ================= DATA ================= */
 
 const lights = [];
+
 let selected = null;
 
-uploadBtn.onclick = () => upload.click();
-upload.onchange = e => photo.src = URL.createObjectURL(e.target.files[0]);
 
-addLightBtn.onclick = () => {
-  const l = createLight();
-  lights.push(l);
-  list.appendChild(l.button);
-  container.append(l.overlay, l.dot);
-  selectLight(l);
-  render(l);
+/* ================= UPLOAD ================= */
+
+uploadBtn.onclick = () => {
+  upload.click();
 };
 
+upload.onchange = e => {
+
+  const file = e.target.files[0];
+
+  if (!file) return;
+
+  photo.src = URL.createObjectURL(file);
+
+};
+
+
+/* ================= ADD LIGHT ================= */
+
+addLightBtn.onclick = () => {
+
+  const light = createLight();
+
+  lights.push(light);
+
+  list.appendChild(light.button);
+
+  container.append(
+    light.overlay,
+    light.dot
+  );
+
+  selectLight(light);
+
+  updateLightCount();
+
+  render(light);
+
+};
+
+
+/* ================= DELETE ================= */
+
 deleteBtn.onclick = () => {
+
   if (!selected) return;
+
+  const index = lights.indexOf(selected);
 
   selected.dot.remove();
   selected.overlay.remove();
   selected.button.remove();
 
-  const index = lights.indexOf(selected);
   lights.splice(index, 1);
 
   selected = null;
-  if (lights.length > 0) selectLight(lights[Math.max(0, index - 1)]);
+
+  updateLightCount();
+
+  if (lights.length > 0) {
+
+    selectLight(
+      lights[Math.max(0, index - 1)]
+    );
+
+  }
+
 };
 
-function selectLight(l) {
-  lights.forEach(x => x.dot.classList.remove("selected"));
-  selected = l;
-  l.dot.classList.add("selected");
 
-  color.value = l.color;
-  intensity.value = l.intensity;
-  size.value = l.size;
-  posX.value = l.x;
-  posY.value = l.y;
+/* ================= SELECT ================= */
+
+function selectLight(light) {
+
+  lights.forEach(l =>
+    l.dot.classList.remove("selected")
+  );
+
+  selected = light;
+
+  light.dot.classList.add("selected");
+
+  color.value = light.color;
+  intensity.value = light.intensity;
+  size.value = light.size;
+  posX.value = light.x;
+  posY.value = light.y;
+
+  updateValues();
+
 }
 
+
+/* ================= CREATE LIGHT ================= */
+
 function createLight() {
-  const dot = document.createElement("div");
+
+  const dot =
+    document.createElement("div");
+
   dot.className = "light-dot";
+
   dot.style.left = "50%";
   dot.style.top = "50%";
 
-  const overlay = document.createElement("div");
+
+  const overlay =
+    document.createElement("div");
+
   overlay.className = "light-overlay";
 
-  const button = document.createElement("button");
-  button.textContent = `Light ${lights.length + 1}`;
-  button.onclick = () => selectLight(light);
+
+  const button =
+    document.createElement("button");
+
+  button.className =
+    "light-list-button";
 
   const light = {
-    dot, overlay, button,
+
+    dot,
+    overlay,
+    button,
+
     color: "#ffffff",
+
     intensity: 0.8,
+
     size: 250,
+
     x: 50,
+
     y: 50
+
   };
+
+
+  button.textContent =
+    `Light ${lights.length + 1}`;
+
+  button.onclick =
+    () => selectLight(light);
+
 
   makeDraggable(light);
+
   return light;
+
 }
 
-function makeDraggable(l) {
-  l.dot.onmousedown = e => {
-    const r = photo.getBoundingClientRect();
-    const ox = e.offsetX;
-    const oy = e.offsetY;
 
-    document.onmousemove = ev => {
-      l.x = ((ev.clientX - r.left - ox) / photo.width) * 100;
-      l.y = ((ev.clientY - r.top - oy) / photo.height) * 100;
-      updatePosition(l);
-      syncControls(l);
-      render(l);
-    };
-    document.onmouseup = () => document.onmousemove = null;
-  };
+/* ================= DRAGGING ================= */
+
+function makeDraggable(light) {
+
+  light.dot.addEventListener(
+    "pointerdown",
+    e => {
+
+      e.preventDefault();
+
+      selectLight(light);
+
+      light.dot.setPointerCapture(e.pointerId);
+
+      const rect =
+        photo.getBoundingClientRect();
+
+      const move = ev => {
+
+        let x =
+          ((ev.clientX - rect.left)
+          / rect.width) * 100;
+
+        let y =
+          ((ev.clientY - rect.top)
+          / rect.height) * 100;
+
+        x = Math.max(0, Math.min(100, x));
+        y = Math.max(0, Math.min(100, y));
+
+        light.x = x;
+        light.y = y;
+
+        updatePosition(light);
+
+        syncControls(light);
+
+        render(light);
+
+      };
+
+      const stop = () => {
+
+        light.dot.removeEventListener(
+          "pointermove",
+          move
+        );
+
+        light.dot.removeEventListener(
+          "pointerup",
+          stop
+        );
+
+      };
+
+      light.dot.addEventListener(
+        "pointermove",
+        move
+      );
+
+      light.dot.addEventListener(
+        "pointerup",
+        stop
+      );
+
+    }
+  );
+
 }
 
-function updatePosition(l) {
-  l.dot.style.left = l.x + "%";
-  l.dot.style.top = l.y + "%";
+
+/* ================= POSITION ================= */
+
+function updatePosition(light) {
+
+  light.dot.style.left =
+    light.x + "%";
+
+  light.dot.style.top =
+    light.y + "%";
+
 }
 
-function syncControls(l) {
-  if (l === selected) {
-    posX.value = l.x;
-    posY.value = l.y;
-  }
+
+function syncControls(light) {
+
+  if (light !== selected) return;
+
+  posX.value = light.x;
+  posY.value = light.y;
+
+  updateValues();
+
 }
 
-[color, intensity, size, posX, posY].forEach(c =>
-  c.oninput = () => {
+
+/* ================= CONTROLS ================= */
+
+[color, intensity, size, posX, posY]
+.forEach(control => {
+
+  control.oninput = () => {
+
     if (!selected) return;
-    selected.color = color.value;
-    selected.intensity = intensity.value;
-    selected.size = size.value;
-    selected.x = posX.value;
-    selected.y = posY.value;
+
+    selected.color =
+      color.value;
+
+    selected.intensity =
+      Number(intensity.value);
+
+    selected.size =
+      Number(size.value);
+
+    selected.x =
+      Number(posX.value);
+
+    selected.y =
+      Number(posY.value);
+
     updatePosition(selected);
+
+    updateValues();
+
     render(selected);
+
+  };
+
+});
+
+
+/* ================= VALUES ================= */
+
+function updateValues() {
+
+  intensityValue.textContent =
+    Math.round(
+      Number(intensity.value) * 100
+    ) + "%";
+
+  sizeValue.textContent =
+    Math.round(Number(size.value));
+
+  xValue.textContent =
+    Math.round(Number(posX.value)) + "%";
+
+  yValue.textContent =
+    Math.round(Number(posY.value)) + "%";
+
+  vValue.textContent =
+    Math.round(
+      Number(vStrength.value) * 100
+    ) + "%";
+
+}
+
+
+/* ================= LIGHT RENDER ================= */
+
+function render(light) {
+
+  if (!photo.complete ||
+      !photo.naturalWidth) return;
+
+  const canvas =
+    document.createElement("canvas");
+
+  canvas.width =
+    photo.naturalWidth;
+
+  canvas.height =
+    photo.naturalHeight;
+
+  const ctx =
+    canvas.getContext("2d");
+
+
+  const x =
+    (light.x / 100) *
+    canvas.width;
+
+  const y =
+    (light.y / 100) *
+    canvas.height;
+
+
+  const gradient =
+    ctx.createRadialGradient(
+      x,
+      y,
+      0,
+      x,
+      y,
+      light.size
+    );
+
+
+  gradient.addColorStop(
+    0,
+    rgba(
+      light.color,
+      light.intensity
+    )
+  );
+
+  gradient.addColorStop(
+    1,
+    "rgba(0,0,0,0)"
+  );
+
+
+  ctx.fillStyle =
+    gradient;
+
+  ctx.fillRect(
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+
+  light.overlay.style.backgroundImage =
+    `url(${canvas.toDataURL()})`;
+
+}
+
+
+/* ================= RGBA ================= */
+
+function rgba(hex, alpha) {
+
+  const r =
+    parseInt(hex.slice(1,3),16);
+
+  const g =
+    parseInt(hex.slice(3,5),16);
+
+  const b =
+    parseInt(hex.slice(5,7),16);
+
+  return `rgba(${r},${g},${b},${alpha})`;
+
+}
+
+
+/* ================= VIGNETTE ================= */
+
+vToggle.onchange =
+vStrength.oninput = () => {
+
+  updateValues();
+
+  vignetteOverlay.style.background =
+    vToggle.checked
+
+      ? `radial-gradient(
+          circle,
+          rgba(0,0,0,0) 50%,
+          rgba(
+            0,
+            0,
+            0,
+            ${vStrength.value}
+          ) 100%
+        )`
+
+      : "";
+
+};
+
+
+/* ================= LIGHT COUNT ================= */
+
+function updateLightCount() {
+
+  lightCount.textContent =
+    lights.length;
+
+}
+
+
+/* ================= IMAGE LOADED ================= */
+
+photo.onload = () => {
+
+  lights.forEach(render);
+
+};
+
+
+/* ================= EXPORT ================= */
+
+document.getElementById("download").onclick =
+() => {
+
+  if (!photo.naturalWidth) {
+
+    alert("Upload an image first.");
+
+    return;
+
   }
-);
 
-function render(l) {
-  const c = document.createElement("canvas");
-  c.width = photo.width;
-  c.height = photo.height;
-  const ctx = c.getContext("2d");
 
-  const x = (l.x / 100) * c.width;
-  const y = (l.y / 100) * c.height;
+  const canvas =
+    document.createElement("canvas");
 
-  const g = ctx.createRadialGradient(x,y,0,x,y,l.size);
-  g.addColorStop(0, rgba(l.color, l.intensity));
-  g.addColorStop(1, "rgba(0,0,0,0)");
+  canvas.width =
+    photo.naturalWidth;
 
-  ctx.fillStyle = g;
-  ctx.fillRect(0,0,c.width,c.height);
-  l.overlay.style.backgroundImage = `url(${c.toDataURL()})`;
-}
+  canvas.height =
+    photo.naturalHeight;
 
-function rgba(hex, a) {
-  return `rgba(${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)},${a})`;
-}
+  const ctx =
+    canvas.getContext("2d");
 
-document.getElementById("download").onclick = () => {
-  const c = document.createElement("canvas");
-  c.width = photo.width;
-  c.height = photo.height;
-  const ctx = c.getContext("2d");
-  ctx.drawImage(photo,0,0);
 
-  lights.forEach(l => {
-    const x = (l.x / 100) * c.width;
-    const y = (l.y / 100) * c.height;
-    const g = ctx.createRadialGradient(x,y,0,x,y,l.size);
-    g.addColorStop(0, rgba(l.color, l.intensity * 0.6));
-    g.addColorStop(1, "rgba(0,0,0,0)");
-    ctx.fillStyle = g;
-    ctx.fillRect(0,0,c.width,c.height);
+  /* Base image */
+
+  ctx.drawImage(
+    photo,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+
+  /* Lights */
+
+  lights.forEach(light => {
+
+    const x =
+      (light.x / 100) *
+      canvas.width;
+
+    const y =
+      (light.y / 100) *
+      canvas.height;
+
+
+    const gradient =
+      ctx.createRadialGradient(
+        x,
+        y,
+        0,
+        x,
+        y,
+        light.size
+      );
+
+
+    gradient.addColorStop(
+      0,
+      rgba(
+        light.color,
+        light.intensity * 0.6
+      )
+    );
+
+    gradient.addColorStop(
+      1,
+      "rgba(0,0,0,0)"
+    );
+
+
+    ctx.fillStyle =
+      gradient;
+
+    ctx.fillRect(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
   });
 
+
+  /* Vignette */
+
   if (vToggle.checked) {
-    const vg = ctx.createRadialGradient(
-      c.width/2,c.height/2,
-      c.width*0.45,
-      c.width/2,c.height/2,
-      c.width
+
+    const gradient =
+      ctx.createRadialGradient(
+        canvas.width / 2,
+        canvas.height / 2,
+        canvas.width * .4,
+        canvas.width / 2,
+        canvas.height / 2,
+        canvas.width
+      );
+
+
+    gradient.addColorStop(
+      0,
+      "rgba(0,0,0,0)"
     );
-    vg.addColorStop(0,"rgba(0,0,0,0)");
-    vg.addColorStop(1,`rgba(0,0,0,${vStrength.value})`);
-    ctx.fillStyle = vg;
-    ctx.fillRect(0,0,c.width,c.height);
+
+    gradient.addColorStop(
+      1,
+      `rgba(
+        0,
+        0,
+        0,
+        ${vStrength.value}
+      )`
+    );
+
+
+    ctx.fillStyle =
+      gradient;
+
+    ctx.fillRect(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
   }
 
-  const a = document.createElement("a");
-  a.href = c.toDataURL();
-  a.download = "lightmaker.png";
-  a.click();
+
+  /* Download */
+
+  const link =
+    document.createElement("a");
+
+  link.download =
+    "lightmaker.png";
+
+  link.href =
+    canvas.toDataURL("image/png");
+
+  link.click();
+
 };
 
-vToggle.onchange = vStrength.oninput = () => {
-  vignetteOverlay.style.background = vToggle.checked
-    ? `radial-gradient(circle, rgba(0,0,0,0) 55%, rgba(0,0,0,${vStrength.value}) 100%)`
-    : "";
-};
+
+/* ================= INITIAL ================= */
+
+updateValues();
+updateLightCount();
+
 </script>
 
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"e3c1c9af36de41759418005494a48906","r":1,"spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
